@@ -1,0 +1,91 @@
+# ==============
+#  Python files
+# ==============
+*.py[cod]
+*$py.class
+__pycache__/
+*.so
+
+# ==============
+#  MacOS
+# ==============
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ==============
+#  Virtual Envs
+# ==============
+env/
+venv/
+ENV/
+.venv/
+*.egg-info/
+
+# ==============
+#  Django
+# ==============
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Django migrations
+*/migrations/*
+!*/migrations/__init__.py
+
+# Static / media
+staticfiles/
+media/
+
+# Gunicorn
+gunicorn.log
+gunicorn.err
+
+# ==============
+#  IDEs / Editor
+# ==============
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.lock
+npm-debug.log
+yarn-error.log
+
+# ==============
+#  Build / Dist
+# ==============
+build/
+dist/
+eggs/
+sdist/
+wheel/
+
+# ==============
+#  Coverage
+# ==============
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+htmlcov/
+.coverage.*
+
+# ==============
+#  Env Variables
+# ==============
+.env
+.env.*
+.envrc
+
+# ==============
+#  Logs
+# ==============
+*.log
+log/
+logs/
+*.pid
+*.seed
+
