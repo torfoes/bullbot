@@ -95,25 +95,49 @@ class PriceFeed(models.Model):
         return f"{self.token.symbol} at {self.timestamp}"
 
 
-class Tweet(models.Model):
+class Post(models.Model):
     tweet_id = models.CharField(max_length=50, unique=True)
     user_handle = models.CharField(max_length=100)
     text = models.TextField()
     timestamp = models.DateTimeField()
     inserted_at = models.DateTimeField(auto_now_add=True)
+    sector = models.CharField(max_length=50, default="none")
+    sentiment = models.CharField(max_length=10, blank=True, default="")
 
     def __str__(self):
-        return f"Tweet {self.tweet_id} by {self.user_handle}"
+        return f"Post {self.tweet_id} by {self.user_handle}"
 
 
 class SentimentScore(models.Model):
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name="sentiment_scores")
+    tweet = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="sentiment_scores")
     sentiment_value = models.FloatField()  # e.g. -1 to 1
     model_version = models.CharField(max_length=50, default="1.0")
     scored_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Sentiment: {self.sentiment_value} for Tweet {self.tweet.tweet_id}"
+ 
+ 
+class OptionTrade(models.Model):
+    """Paper-traded option based on a classified post."""
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="option_trades")
+    ticker = models.CharField(max_length=10)
+    option_type = models.CharField(max_length=4, choices=[('CALL', 'Call'), ('PUT', 'Put')])
+    strike = models.DecimalField(max_digits=10, decimal_places=2)
+    expiry = models.DateField()
+    entry_price = models.DecimalField(max_digits=20, decimal_places=8)
+    exit_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True)
+    entry_timestamp = models.DateTimeField(auto_now_add=True)
+    exit_timestamp = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.option_type} {self.ticker} @{self.strike} exp {self.expiry}"
+    @property
+    def profit_pct(self):
+        """Return profit percentage (exit_price vs entry_price) if closed."""
+        if self.exit_price is None:
+            return None
+        return (self.exit_price - self.entry_price) / self.entry_price * 100
 
 
 class Order(models.Model):
@@ -137,7 +161,6 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
     order_type = models.CharField(max_length=20, choices=ORDER_TYPE_CHOICES, default="MARKET")
     is_paper_trade = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

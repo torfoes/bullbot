@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper-Traded Option Positions</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Paper-Traded Option Positions</h1>
+    {% if trades %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Post</th>
+                <th>Timestamp</th>
+                <th>Sector</th>
+                <th>Sentiment</th>
+                <th>Option</th>
+                <th>Ticker</th>
+                <th>Strike</th>
+                <th>Expiry</th>
+                <th>Entry Price</th>
+                <th>Exit Price</th>
+                <th>P/L %</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for t in trades %}
+            <tr>
+                <td>{{ t.id }}</td>
+                <td>{{ t.post.text|truncatechars:30 }}</td>
+                <td>{{ t.post.timestamp }}</td>
+                <td>{{ t.post.sector }}</td>
+                <td>{{ t.post.sentiment }}</td>
+                <td>{{ t.option_type }}</td>
+                <td>{{ t.ticker }}</td>
+                <td>{{ t.strike }}</td>
+                <td>{{ t.expiry }}</td>
+                <td>{{ t.entry_price }}</td>
+                <td>{{ t.exit_price|default:'-' }}</td>
+                <td>
+                    {% if t.profit_pct is not None %}
+                        {{ t.profit_pct|floatformat:2 }}%
+                    {% else %}-{% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No positions to display.</p>
+    {% endif %}
+</body>
+</html>

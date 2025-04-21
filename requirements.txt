@@ -1,2 +1,8 @@
-django
+Django
 python-dotenv
+openai
+truthbrush @ git+https://github.com/stanfordio/truthbrush.git
+pandas
+pytest
+pytest-django
+yfinance

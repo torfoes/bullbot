@@ -10,7 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r)$tb84rj8qv=rkhkz%psb((n-t#ijke!ti^+uaa=5mjow+%h+'
+# Loaded from environment
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG mode from environment (default False)
+DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = []
 
@@ -81,6 +88,22 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# Credentials for Truth Social ingestion
+TRUTH_CREDENTIALS = {
+    'username': os.getenv('TRUTH_USERNAME'),
+    'password': os.getenv('TRUTH_PASSWORD'),
+}
+# OpenAI API key for NLP
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+# Broker setting (simulation only for now)
+BROKER = os.getenv('BROKER', 'simulation')
+# Fully-qualified class paths for services (swapable)
+INGESTION_CLASS = os.getenv('INGESTION_CLASS', 'trading.injestion.TruthClient')
+NLP_SERVICE_CLASS = os.getenv('NLP_SERVICE_CLASS', 'trading.injestion.NLPService')
+# Poll interval in seconds for run_bot command
+POLL_INTERVAL = int(os.getenv('POLL_INTERVAL', '60'))
+# Username/handle to fetch posts for
+TRUTH_HANDLE = os.getenv('TRUTH_HANDLE', 'realDonaldTrump')
 
 
 # Password validation
